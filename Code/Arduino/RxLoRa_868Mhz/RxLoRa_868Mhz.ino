@@ -1,19 +1,19 @@
-//include
-#include <SoftwareSerial.h>
-#include <RH_RF95.h>
+//ajout des libraries utile
+#include <SoftwareSerial.h> //librarie pour la creation du port serie virtuel
+#include <RH_RF95.h>  //librarie utiliser pour comuniquer avec le module LoRa
 
-//set the pin used for the LoRa module
+//reglage des pins du module LoRa sur la carte arduino
 #define rxPin 5
 #define txPin 6
-SoftwareSerial LoRaPin (rxPin, txPin);
-RH_RF95 rf95(LoRaPin);  //give the pin of the loRa module to the RH_RF95 lib
+SoftwareSerial LoRaPin (rxPin, txPin); //creation d un port serie virtuel car la carte arduino ne possede pas assez de port serie
+RH_RF95 rf95(LoRaPin);  //envoie du port serie virtuel a la librarie du module loRa RH_RF95 lib
 
 
 void setup() 
 {
-  Serial.begin(9600); //set the serial port baudrate  
+  Serial.begin(9600); //regle la frequence de comunication du port serie de l arduino pour comuniquer avec l ordinateur
 
-  //initialise the LoRa module
+  //initialise le module LoRa
   if (!rf95.init())
   {
       Serial.println("LoRa module init fail");
@@ -24,38 +24,22 @@ void setup()
     Serial.println("LoRa module initialised");
   }
 
-  //set the different seting of the emitter
-  //rf95.setTxPower(5, false);  //range from 5 to 20dBm
+  //reglage des differents parametre de l emeteur
   //rf95.setModemConfig(4); //set the setModemConfig to "Bw125Cr48Sf4096" ie "Bw = 125 kHz, Cr = 4/8, Sf = 4096chips/symbol, CRC on. Slow+long range"     4
-  rf95.setFrequency(868.0); //set the frequency of the LoRa module (write 434 for the 434Mhz module)
+  rf95.setFrequency(868.0); //regle la frequence du module LoRa (ecrire ici 434 pour le module 434Mhz)
 }
 
 void loop()
 {
-   
-    // Now wait for a reply
-    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-    uint8_t len = sizeof(buf);
+  //Creation du duffer de reception
+  uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
+  uint8_t len = sizeof(buf);
 
-    if(rf95.waitAvailableTimeout(3000))
-    {
-        // Should be a reply message for us now   
-        if(rf95.recv(buf, &len))
-        {
-            Serial.print("got reply: ");
-            Serial.println((char*)buf);
-        }
-        else
-        {
-            Serial.println("recv failed");
-        }
-    }
-    else
-    {
-        Serial.println("No reply, is rf95_server running?");
-    }
-    
-    delay(1000);
+  rf95.waitAvailableTimeout(3000);  //attend qu'un message soit disponible
+  if(rf95.recv(buf, &len))  //si un message est disponible dans le buffer
+  {
+      //affichage du message recu
+      Serial.print("Message received: ");
+      Serial.println((char*)buf);
+  }
 }
-
-

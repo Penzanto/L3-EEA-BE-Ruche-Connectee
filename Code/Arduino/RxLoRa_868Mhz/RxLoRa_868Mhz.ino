@@ -9,7 +9,8 @@ SoftwareSerial LoRaPin (rxPin, txPin);
 RH_RF95 rf95(LoRaPin);  //give the pin of the loRa module to the RH_RF95 lib
 
 
-void setup() {
+void setup() 
+{
   Serial.begin(9600); //set the serial port baudrate  
 
   //initialise the LoRa module
@@ -29,11 +30,32 @@ void setup() {
   rf95.setFrequency(868.0); //set the frequency of the LoRa module (write 434 for the 434Mhz module)
 }
 
-void loop() {
-  uint8_t data[] = "Hello World!";  //make a buffer of byte for the Tx
-  rf95.send(data, sizeof(data));  //send the data throught the LoRa module
-  
-  rf95.waitPacketSent();  //wait until the end of the transmition
+void loop()
+{
+   
+    // Now wait for a reply
+    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
+    uint8_t len = sizeof(buf);
 
-  delay(3000);
+    if(rf95.waitAvailableTimeout(3000))
+    {
+        // Should be a reply message for us now   
+        if(rf95.recv(buf, &len))
+        {
+            Serial.print("got reply: ");
+            Serial.println((char*)buf);
+        }
+        else
+        {
+            Serial.println("recv failed");
+        }
+    }
+    else
+    {
+        Serial.println("No reply, is rf95_server running?");
+    }
+    
+    delay(1000);
 }
+
+

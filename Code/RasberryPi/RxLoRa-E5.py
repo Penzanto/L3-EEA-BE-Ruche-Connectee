@@ -38,7 +38,7 @@ def main():
 
     #initialisation du port serie
     ser = serial.Serial(
-        port='COM8',
+        port='/dev/ttyAMA0',
         baudrate=9600,
         bytesize = serial.EIGHTBITS,
         stopbits = serial.STOPBITS_ONE,

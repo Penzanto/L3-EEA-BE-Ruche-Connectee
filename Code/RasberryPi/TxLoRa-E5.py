@@ -46,7 +46,7 @@ def main():
     if(ser.isOpen()):
         ser.flushInput()
         ser.flushOutput()
-        
+
         #initialisation du module LoRa
         ser.write('AT+MODE=TEST'.encode())
         receptionLoRa = lectureLoRa(ser, octetLecture=200, stringAttendu="TEST", timeOut=5)
@@ -76,7 +76,7 @@ def main():
 
         #envoie la meme data en continue pour tester la reception des datas en mode P2P
         while(True):
-            ser.write('AT+TEST=TXLRPKT, "53 6F 72 72 79 20 69 27 61 6D 20 6A 75 73 74 20 74 65 73 74 69 6E 67 20 74 68 69 6E 67 73"'.encode())
+            ser.write('AT+TEST=TXLRPKT, "2C33 00 01 AA"'.encode())
             receptionLoRa = lectureLoRa(ser, octetLecture=200, stringAttendu="TX DONE", timeOut=5)
             print(receptionLoRa)
             time.sleep(10)

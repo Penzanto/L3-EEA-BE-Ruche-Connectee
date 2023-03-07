@@ -38,7 +38,7 @@ def main():
 
     #initialisation du port serie
     ser = serial.Serial(
-        port='COM8',
+        port='COM6',
         baudrate=9600,
         bytesize = serial.EIGHTBITS,
         stopbits = serial.STOPBITS_ONE,
@@ -53,19 +53,19 @@ def main():
         
         #initialisation du module LoRa'AT+MODE=TEST'
         ser.write('AT+MODE=TEST'.encode())
-        receptionLoRa = lectureLoRa(ser, octetLecture=200, stringAttendu="+MODE: TEST", timeOut=5)
+        receptionLoRa = lectureLoRa(port=ser, octetLecture=200, stringAttendu="+MODE: TEST", timeOut=5)
         print(receptionLoRa)
         if(receptionLoRa != "-1"):
             ser.write('AT+TEST=STOP'.encode())
-            receptionLoRa = lectureLoRa(ser, octetLecture=200, stringAttendu="+TEST: STOP", timeOut=5)
+            receptionLoRa = lectureLoRa(port=ser, octetLecture=200, stringAttendu="+TEST: STOP", timeOut=5)
             print(receptionLoRa)
             if(receptionLoRa != "-1"):
                 ser.write('AT+LW=LDRO,ON'.encode())
-                receptionLoRa = lectureLoRa(ser, octetLecture=200, stringAttendu="+LW: LDRO, ON", timeOut=5)
+                receptionLoRa = lectureLoRa(port=ser, octetLecture=200, stringAttendu="+LW: LDRO, ON", timeOut=5)
                 print(receptionLoRa)
                 if(receptionLoRa != "-1"):
                     ser.write('AT+TEST=RFCFG,868,SF12,125,12,15,14,ON,OFF,OFF'.encode())
-                    receptionLoRa = lectureLoRa(ser, octetLecture=200, stringAttendu="+TEST: RFCFG F:868000000, SF12, BW125K, TXPR:12, RXPR:15, POW:14dBm, CRC:ON, IQ:OFF, NET:OFF", timeOut=5)
+                    receptionLoRa = lectureLoRa(port=ser, octetLecture=200, stringAttendu="+TEST: RFCFG F:868000000, SF12, BW125K, TXPR:12, RXPR:15, POW:14dBm, CRC:ON, IQ:OFF, NET:OFF", timeOut=5)
                     print(receptionLoRa)
                     if(receptionLoRa != "-1"):
                         print("initialisation du module LoRa OK")
@@ -89,7 +89,7 @@ def main():
         #envoie la commande de reception de donnee en continue pour tester la reception des datas en mode P2P
         ser.write('AT+TEST=RXLRPKT'.encode())
         while(True):
-            receptionLoRa = lectureLoRa(ser, octetLecture=200, stringAttendu='RX "', timeOut=20)
+            receptionLoRa = lectureLoRa(port=ser, octetLecture=200, stringAttendu='RX "', timeOut=20)
             if(receptionLoRa != "-1"):
                 print(receptionLoRa)
 
@@ -108,6 +108,7 @@ def main():
                         print("valeurCapteur: " + str(valeurCapteur_recu))
                     else:
                         print("mauvaise cle systeme recu")
+
 
 #lancement de la fonction main
 if __name__ == '__main__':

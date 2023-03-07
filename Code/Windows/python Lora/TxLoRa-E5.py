@@ -3,6 +3,7 @@ import serial #pyserial
 import time 
 import sys
 
+
 #----------Autre fonction----------
 def lectureLoRa(port, octetLecture=200, stringAttendu="", timeOut=5):
     """Fonction de lecture serie des information retourner par le module LoRa-E5
@@ -32,9 +33,15 @@ def lectureLoRa(port, octetLecture=200, stringAttendu="", timeOut=5):
 
 #----------Fonction main----------
 def main():
+    #variable local
+    codeSysteme = 0x2c33
+    codeRuche = 0x00
+    indiceCapteur = 0x1
+    valeurCapteur = 0xAA
+
     #initialisation du port serie
     ser = serial.Serial(
-        port='COM8',
+        port='COM6',
         baudrate=9600,
         bytesize = serial.EIGHTBITS,
         stopbits = serial.STOPBITS_ONE,
@@ -46,14 +53,14 @@ def main():
     if(ser.isOpen()):
         ser.flushInput()
         ser.flushOutput()
-        
+
         #initialisation du module LoRa
         ser.write('AT+MODE=TEST'.encode())
-        receptionLoRa = lectureLoRa(ser, octetLecture=200, stringAttendu="TEST", timeOut=5)
+        receptionLoRa = lectureLoRa(port=ser, octetLecture=200, stringAttendu="TEST", timeOut=5)
         print(receptionLoRa)
         if(receptionLoRa != "-1"):
             ser.write('AT+LW=LDRO,ON'.encode())
-            receptionLoRa = lectureLoRa(ser, octetLecture=200, stringAttendu="LDRO, ON", timeOut=5)
+            receptionLoRa = lectureLoRa(port=ser, octetLecture=200, stringAttendu="LDRO, ON", timeOut=5)
             print(receptionLoRa)
             if(receptionLoRa != "-1"):
                 ser.write('AT+TEST=RFCFG,868,SF12,125,12,15,14,ON,OFF,OFF'.encode())
@@ -76,12 +83,16 @@ def main():
 
         #envoie la meme data en continue pour tester la reception des datas en mode P2P
         while(True):
-            ser.write('AT+TEST=TXLRPKT, "53 6F 72 72 79 20 69 27 61 6D 20 6A 75 73 74 20 74 65 73 74 69 6E 67 20 74 68 69 6E 67 73"'.encode())
+            #preparation et envoie de la trame 
+            LoRaDataAEnvoyer = 'AT+TEST=TXLRPKT, "' + hex(codeSysteme) + " " + hex(codeRuche) + " " + hex(indiceCapteur) + " " + hex(valeurCapteur) + '"' 
+            ser.write(LoRaDataAEnvoyer.encode())
+            
+            #reception de l'acquittement du module LoRa 
             receptionLoRa = lectureLoRa(ser, octetLecture=200, stringAttendu="TX DONE", timeOut=5)
             print(receptionLoRa)
             time.sleep(10)
 
+
 #lancement de la fonction main
 if __name__ == '__main__':
     main()
-

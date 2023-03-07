@@ -58,26 +58,29 @@ def main():
         ser.write('AT+MODE=TEST'.encode())
         receptionLoRa = lectureLoRa(port=ser, octetLecture=200, stringAttendu="TEST", timeOut=5)
         print(receptionLoRa)
+
         if(receptionLoRa != "-1"):
             ser.write('AT+LW=LDRO,ON'.encode())
             receptionLoRa = lectureLoRa(port=ser, octetLecture=200, stringAttendu="LDRO, ON", timeOut=5)
             print(receptionLoRa)
-            if(receptionLoRa != "-1"):
-                ser.write('AT+TEST=RFCFG,868,SF12,125,12,15,14,ON,OFF,OFF'.encode())
-                receptionLoRa = lectureLoRa(ser, octetLecture=200, stringAttendu="RFCFG F:868000000, SF12, BW125K, TXPR:12, RXPR:15, POW:14dBm, CRC:ON, IQ:OFF, NET:OFF", timeOut=5)
-                print(receptionLoRa)
-                if(receptionLoRa != "-1"):
-                    print("initialisation du module LoRa OK")
-                else:
-                    print("intialisation du module LoRa KO (ecriture des valeurs d emission 'freq, SF, bandepassante etc...')")
-                    print("fermeture du programme")
-                    sys.exit()
-            else:
-                print("intialisation du module LoRa KO (ecriture de la valeur du LRDO)")
-                print("fermeture du programme")
-                sys.exit()
         else:
             print("intialisation du module LoRa KO (ecriture du mode test)")
+            print("fermeture du programme")
+            sys.exit()
+
+        if(receptionLoRa != "-1"):
+            ser.write('AT+TEST=RFCFG,868,SF12,125,12,15,14,ON,OFF,OFF'.encode())
+            receptionLoRa = lectureLoRa(ser, octetLecture=200, stringAttendu="RFCFG F:868000000, SF12, BW125K, TXPR:12, RXPR:15, POW:14dBm, CRC:ON, IQ:OFF, NET:OFF", timeOut=5)
+            print(receptionLoRa)
+        else:
+            print("intialisation du module LoRa KO (ecriture de la valeur du LRDO)")
+            print("fermeture du programme")
+            sys.exit()
+    
+        if(receptionLoRa != "-1"):
+            print("initialisation du module LoRa OK")
+        else:
+            print("intialisation du module LoRa KO (ecriture des valeurs d emission 'freq, SF, bandepassante etc...')")
             print("fermeture du programme")
             sys.exit()
 

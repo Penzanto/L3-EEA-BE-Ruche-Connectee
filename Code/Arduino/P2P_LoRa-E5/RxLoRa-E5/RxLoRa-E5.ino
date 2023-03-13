@@ -206,16 +206,18 @@ void ReceptionLoRa_E5_P2P(uint16_t *cleSysteme, uint8_t *idRuche, uint8_t *typeC
   
   //declaration des variables locals
   String messageLoraRecu ="";
+  uint8_t debutString =0;  
 
   //traitement des messages seuelement si il y a des messages en attente dans le buffer
   if(portSerieVirtuel.available() != 0){
     messageLoraRecu = portSerieVirtuel.readString();  
     portSerieCom.println(messageLoraRecu);
     //conversion du string recu en differents integer
-    *cleSysteme = strtol(messageLoraRecu.substring(messageLoraRecu.indexOf("TEST: RX ") +10, messageLoraRecu.indexOf("TEST: RX ") +14).c_str(), NULL, 16);
-    *idRuche = strtol(messageLoraRecu.substring(messageLoraRecu.indexOf("TEST: RX ") +14, messageLoraRecu.indexOf("TEST: RX ") +16).c_str(), NULL, 16);
-    *typeCapteur = strtol(messageLoraRecu.substring(messageLoraRecu.indexOf("TEST: RX ") +16, messageLoraRecu.indexOf("TEST: RX ") +18).c_str(), NULL, 16);
-    *valeurCapteur = strtol(messageLoraRecu.substring(messageLoraRecu.indexOf("TEST: RX ") +18, messageLoraRecu.indexOf("TEST: RX ") +22).c_str(), NULL, 16);
+    debutString = messageLoraRecu.indexOf("TEST: RX ") +10;
+    *cleSysteme = strtol(messageLoraRecu.substring(debutString, debutString +4).c_str(), NULL, 16);
+    *idRuche = strtol(messageLoraRecu.substring(debutString +4, debutString +6).c_str(), NULL, 16);
+    *typeCapteur = strtol(messageLoraRecu.substring(debutString +6, debutString +8).c_str(), NULL, 16);
+    *valeurCapteur = strtol(messageLoraRecu.substring(debutString +8, debutString +12).c_str(), NULL, 16);
   }
   else{
     *cleSysteme =0;

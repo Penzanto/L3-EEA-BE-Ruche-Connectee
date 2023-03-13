@@ -99,7 +99,7 @@ def main():
 
                 receptionLoRa_split = receptionLoRa.split('+TEST: RX "')
                 valeurRecu = str(receptionLoRa_split[1])[:-3]
-                if(len(valeurRecu) == 10):
+                if(len(valeurRecu) >= 7):
                     codeSysteme_recu = int(valeurRecu[:4],16)
                     if(codeSysteme_recu == codeSystemeRuche):
                         codeRuche_recu = int(valeurRecu[4:6],16)
@@ -110,8 +110,10 @@ def main():
                         print("codeRuche: " + str(codeRuche_recu))
                         print("indiceCapteur: " + str(indiceCapteur_recu))
                         print("valeurCapteur: " + str(valeurCapteur_recu))
+                        print("")
                     else:
                         print("mauvaise cle systeme recu")
+                        print("")
 
 
 #lancement de la fonction main

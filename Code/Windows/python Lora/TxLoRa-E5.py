@@ -119,9 +119,45 @@ def emission(portSerieLoRa, codeSysteme, codeRuche, indiceCapteur, valeurCapteur
 
     #variable local
     emissionLoRaOK = 1
+    strCodeSysteme = ""
+    strcodeRuche = ""
+    strindiceCapteur = "" 
+    strvaleurCapteur = ""
+
+    #prise en compte de la taille du codeSysteme
+    if(codeSysteme < 16):
+        strCodeSysteme = "000" + hex(codeSysteme)[2:]
+    elif(codeSysteme < 256):
+        strCodeSysteme = "00" + hex(codeSysteme)[2:]
+    elif(codeSysteme < 4096):
+        strCodeSysteme = "0" + hex(codeSysteme)[2:]
+    else:
+        strCodeSysteme = hex(codeSysteme)[2:]
+
+    #prise en compte de la taille valeurCapteur
+    if(valeurCapteur < 16):
+        strvaleurCapteur = "000" + hex(valeurCapteur)[2:]
+    elif(valeurCapteur < 256):
+        strvaleurCapteur = "00" + hex(valeurCapteur)[2:]
+    elif(valeurCapteur < 4096):
+        strvaleurCapteur = "0" + hex(valeurCapteur)[2:]
+    else:
+        strvaleurCapteur = hex(valeurCapteur)[2:]
+
+    #prise en compte de la taille du codeRuche
+    if(codeRuche < 16):
+        strcodeRuche = "0" + hex(codeRuche)[2:]
+    else:
+        strcodeRuche = hex(codeRuche)[2:]
+
+    #prise en compte de la taille du indiceCapteur
+    if(indiceCapteur < 16):
+        strindiceCapteur = "0" + hex(indiceCapteur)[2:]
+    else:
+        strindiceCapteur = hex(indiceCapteur)[2:]
 
     #preparation et envoie de la trame 
-    LoRaDataAEnvoyer = 'AT+TEST=TXLRPKT, "' + hex(codeSysteme) + hex(codeRuche) + hex(indiceCapteur) + hex(valeurCapteur) + '"' 
+    LoRaDataAEnvoyer = 'AT+TEST=TXLRPKT, "' + strCodeSysteme + strcodeRuche + strindiceCapteur + strvaleurCapteur + '"' 
     portSerieLoRa.write(LoRaDataAEnvoyer.encode())
 
     #reception de l'acquittement du module LoRa 
@@ -138,7 +174,7 @@ def emission(portSerieLoRa, codeSysteme, codeRuche, indiceCapteur, valeurCapteur
 def main():
     #initialisation du port serie
     ser = serial.Serial(
-        port='COM8',
+        port='COM6',
         baudrate=9600,
         bytesize = serial.EIGHTBITS,
         stopbits = serial.STOPBITS_ONE,
@@ -171,7 +207,7 @@ def main():
     while(True):
         #emission d un message LoRa
         resulEmissionLoRa = emission(portSerieLoRa = ser,
-            codeSysteme = 0x2c33,
+            codeSysteme = 0x2C33,
             codeRuche = 0x00,
             indiceCapteur = 0x1,
             valeurCapteur = 0xAA)

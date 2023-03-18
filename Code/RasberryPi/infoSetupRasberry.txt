@@ -3,3 +3,5 @@ hardware uart rasberry :
 -> uart TX : GPIO14 (UART_TXD0)
 -> uart RX : GPIO15 (UART_RXD0)
 -> uart USED : serial0 -> '/dev/ttyAMA0' (uart "PL011")
+
+mdp : BEruche

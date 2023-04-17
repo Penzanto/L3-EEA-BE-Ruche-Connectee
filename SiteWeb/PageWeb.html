@@ -1,31 +1,26 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link href="style.css" rel="stylesheet" type="text/css">
+        <link href="style.css" rel="stylesheet" type="text/css">    <!-- link le fichier css -->
+        <script src="scripts.js"></script>  <!-- link le fichier javascript -->
 
-        <title>Test page internet</title>
+        <title>Be ruche EEA</title>
         <meta charset="utf-8" />
     </head>
     <body>
-        <h1>Different capteurs</h1>
+        <!-- id -->
+        <div id="TitreSHT31">SHT31</div>
+        <div id="SHT31_Temp">0</div>
+        <div id="SHT31_Humid">0</div>
 
-        <p>
-            Capteur SHT31:<br>
-            - Temp :    °C<br> 
-            - Humid :   %<br>
-            <br>
-            Capteur DHT11:<br>
-            - Temp :    °C<br>
-            - Humid :   %<br>
-            <br>
-            Capteur Proxi:<br>
-            - Distance :<br>
-            <br>
-            Capteur de masse:<br>
-            - Masse :   Kg<br>
-        </p>
-    </body>
+        <div id="TitreDHT11">DHT11</div>
+        <div id="DHT11_Temp">0</div>
+        <div id="DHT11_Humid">0</div>
 
-    <!-- Launch  the javascript file -->
-    <script src="scripts.js"></script>
+        <div id="TitreDistance">Distance</div>
+        <div id="Distance">0</div>
+
+        <div id="TitreMasse">Masse</div>
+        <div id="Masse">0</div>
+    </body>  
 </html>

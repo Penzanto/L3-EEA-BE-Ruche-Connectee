@@ -105,7 +105,7 @@ def emission(portSerieLoRa, codeSysteme, codeRuche, indiceCapteur, valeurCapteur
         codeSysteme (int): mot de passe utiliser pour la ruche
         codeRuche (int): indice de la ruche
         indiceCapteur (int): indice du capteur de la ruche
-        valeurCapteur (int): valeur du capteur a envoyer
+        valeurCapteur (uint32bits (ieee754)): valeur du capteur a envoyer
         
     Returns:
         int: 1 ou 0 selon si l emission du message c est bien passer ou non
@@ -118,37 +118,25 @@ def emission(portSerieLoRa, codeSysteme, codeRuche, indiceCapteur, valeurCapteur
     strindiceCapteur = "" 
     strvaleurCapteur = ""
 
-    #prise en compte de la taille du codeSysteme
-    if(codeSysteme < 16):
-        strCodeSysteme = "000" + hex(codeSysteme)[2:]
-    elif(codeSysteme < 256):
-        strCodeSysteme = "00" + hex(codeSysteme)[2:]
-    elif(codeSysteme < 4096):
-        strCodeSysteme = "0" + hex(codeSysteme)[2:]
-    else:
-        strCodeSysteme = hex(codeSysteme)[2:]
-
     #prise en compte de la taille valeurCapteur
-    if(valeurCapteur < 16):
-        strvaleurCapteur = "000" + hex(valeurCapteur)[2:]
-    elif(valeurCapteur < 256):
-        strvaleurCapteur = "00" + hex(valeurCapteur)[2:]
-    elif(valeurCapteur < 4096):
-        strvaleurCapteur = "0" + hex(valeurCapteur)[2:]
-    else:
-        strvaleurCapteur = hex(valeurCapteur)[2:]
+    strvaleurCapteur = hex(valeurCapteur)[2:]
+    while (len(strvaleurCapteur) < 8):
+        strvaleurCapteur = "0" + strvaleurCapteur
 
+    #prise en compte de la taille du codeSysteme
+    strCodeSysteme = hex(codeSysteme)[2:]
+    while (len(strCodeSysteme) < 4):
+        strCodeSysteme = "0" + strCodeSysteme
+       
     #prise en compte de la taille du codeRuche
-    if(codeRuche < 16):
-        strcodeRuche = "0" + hex(codeRuche)[2:]
-    else:
-        strcodeRuche = hex(codeRuche)[2:]
+    strcodeRuche = hex(codeRuche)[2:]
+    while (len(strcodeRuche) < 2):
+        strcodeRuche = "0" + strcodeRuche
 
     #prise en compte de la taille du indiceCapteur
-    if(indiceCapteur < 16):
-        strindiceCapteur = "0" + hex(indiceCapteur)[2:]
-    else:
-        strindiceCapteur = hex(indiceCapteur)[2:]
+    strindiceCapteur = hex(indiceCapteur)[2:]
+    while (len(strindiceCapteur) < 2):
+        strindiceCapteur = "0" + strindiceCapteur
 
     #preparation et envoie de la trame 
     LoRaDataAEnvoyer = 'AT+TEST=TXLRPKT, "' + strCodeSysteme + strcodeRuche + strindiceCapteur + strvaleurCapteur + '"' 
@@ -209,7 +197,7 @@ def main():
                 codeSysteme = 0x2C33,
                 codeRuche = 0x00,
                 indiceCapteur = 0x1,
-                valeurCapteur = 0xAA)
+                valeurCapteur = 0xc7f1207e)
 
             #gestion de l erreur demission
             if(resulEmissionLoRa !=1):

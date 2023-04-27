@@ -35,7 +35,7 @@ void setup() {
   String Public_LoRaWAN ="OFF";
   initialisationLoRa_E5_P2P(frequence, SpreadFactor, BandWidth, TX_Preamble, RX_Preamble, Power, CRC, Inverted_IQ, Public_LoRaWAN, SerialLoRa, Serial, &initialisaitonLoRa);
   //si l'initialisation du module c est mal passe on vient bloquer le programme
-  if(initialisaitonLoRa !=1){
+  if(initialisaitonLoRa ==1){
     Serial.println("Blocage du programme");
     while(1){}   
   }
@@ -43,11 +43,11 @@ void setup() {
 
 
 void loop() {
-  uint16_t valeurCapteur =257;  //variable de test
+  float valeurCapteur =-123456.987654321;  //variable de test
   uint8_t receptionLoRa =1; //variablede verification de la bonne emision d un message LoRa
   envoieLoRa_E5_P2P(codeSysteme, codeRuche, SHT31_Humid, valeurCapteur, SerialLoRa, Serial, &receptionLoRa);  //envoie d un message
   //si l'initialisation du module c est mal passe on vient bloquer le programme
-  if(receptionLoRa !=1){
+  if(receptionLoRa ==1){
     Serial.println("Erreur lors de l emission d un message LoRa");
     Serial.println("Blocage du programme");
     while(1){}   
@@ -76,17 +76,17 @@ void initialisationLoRa_E5_P2P(uint16_t frequence,  String SpreadFactor, uint16_
       Public_LoRaWAN (string): 
       portSerieVirtuel (Stream): nom de la class du port serie physique du module LoRa
       portSerieCom (Stream): nom de la class du port serie de la comunication USB
-      initialisaitonLoRa (uint8_t) variable d acquittement de la bonne initialisation du module LoRa
+      initialisaitonLoRa (uint8_t) variable d acquittement de la bonne initialisation du module LoRa. si TRUE erreur de l init
   */
 
   //variable local
   String LoRaRecu = "";
   uint16_t timeOut = 0; 
 
-  *initialisaitonLoRa = 1;
+  *initialisaitonLoRa = 0;
   
   //passage du module Lora en "mode TEST"
-  if(*initialisaitonLoRa ==1){
+  if(*initialisaitonLoRa ==0){
     portSerieVirtuel.print("AT+MODE=TEST");
     timeOut = 0;
     while(portSerieVirtuel.available() == 0 & timeOut < 5000)
@@ -99,14 +99,14 @@ void initialisationLoRa_E5_P2P(uint16_t frequence,  String SpreadFactor, uint16_
     if(LoRaRecu.indexOf("+MODE: TEST") <= 0)
     {
       //passage de la variable d initialisation a false et ecriture d un message d erreur
-      *initialisaitonLoRa = 0;
+      *initialisaitonLoRa = 1;
       portSerieCom.println("");
       portSerieCom.println("erreur ecriture mode TEST");   
     }
   }
   
   //passage du module Lora en "mode STOP" (empeche le module de recevoir des information durant la reprogramation du mode)
-  if(*initialisaitonLoRa ==1){
+  if(*initialisaitonLoRa ==0){
     portSerieVirtuel.print("AT+TEST=STOP");
     timeOut = 0;
     while(portSerieVirtuel.available() == 0 & timeOut < 5000)
@@ -118,14 +118,14 @@ void initialisationLoRa_E5_P2P(uint16_t frequence,  String SpreadFactor, uint16_
     portSerieCom.println(LoRaRecu);
     if(LoRaRecu.indexOf("+TEST: STOP") <= 0)
     {
-      *initialisaitonLoRa = 0;
+      *initialisaitonLoRa = 1;
       portSerieCom.println("");
       portSerieCom.println("erreur ecriture mode STOP");
     }
   }
 
   //reglage du LDRO du module Lora
-  if(*initialisaitonLoRa ==1){
+  if(*initialisaitonLoRa ==0){
     portSerieVirtuel.print("AT+LW=LDRO,ON");
     timeOut = 0;
     while(portSerieVirtuel.available() <= 0 & timeOut < 5000)
@@ -137,14 +137,14 @@ void initialisationLoRa_E5_P2P(uint16_t frequence,  String SpreadFactor, uint16_
     portSerieCom.println(LoRaRecu);
     if(LoRaRecu.indexOf("+LW: LDRO, ON") <= 0)
     {
-      *initialisaitonLoRa = 0;
+      *initialisaitonLoRa = 1;
       portSerieCom.println("");
       portSerieCom.println("erreur ecriture mode LDRO");
     }
   }
 
   //configuration des parametres d emission radio du module LoRa
-  if(*initialisaitonLoRa ==1){
+  if(*initialisaitonLoRa ==0){
     portSerieVirtuel.print("AT+TEST=RFCFG," + String(frequence) + "," + SpreadFactor + "," + String(BandWidth) + "," + String(TX_Preamble) + "," + String(RX_Preamble) + "," + String(Power) + "," + CRC + "," + Inverted_IQ + "," + Public_LoRaWAN);
     timeOut = 0;
     while(portSerieVirtuel.available() <= 0 & timeOut < 5000)
@@ -156,14 +156,14 @@ void initialisationLoRa_E5_P2P(uint16_t frequence,  String SpreadFactor, uint16_
     portSerieCom.println(LoRaRecu);
     if(LoRaRecu.indexOf("RFCFG F") <=0)
     {
-      *initialisaitonLoRa = 0;
+      *initialisaitonLoRa = 1;
       portSerieCom.println("");
       portSerieCom.println("erreur ecriture mode RFCFG");
     }
   }
 
   //message de fin d initialisation
-  if(*initialisaitonLoRa ==1){
+  if(*initialisaitonLoRa ==0){
     portSerieCom.println("initialisation du module LoRa OK");
     portSerieCom.println("");
   }
@@ -173,7 +173,7 @@ void initialisationLoRa_E5_P2P(uint16_t frequence,  String SpreadFactor, uint16_
 }
 
 
-void envoieLoRa_E5_P2P(uint16_t cleSysteme, uint8_t idRuche, uint8_t typeCapteur, uint16_t valeurCapteur, Stream &portSerieVirtuel, Stream &portSerieCom, uint8_t *receptionLoRa)
+void envoieLoRa_E5_P2P(uint16_t cleSysteme, uint8_t idRuche, uint8_t typeCapteur, float valeurCapteur, Stream &portSerieVirtuel, Stream &portSerieCom, uint8_t *receptionLoRa)
 {
   /*
     Fonction utiliser pour envoyer une donnee en peer to peer entre deux module Lora-E5
@@ -182,72 +182,58 @@ void envoieLoRa_E5_P2P(uint16_t cleSysteme, uint8_t idRuche, uint8_t typeCapteur
       cleSysteme (uint16_t): cle utilisee pour dissocier les messages du projet ruche des autres messages sur la frequence 868/433Mhz
       idRuche (uint8_t): numerotation de la ruche, utiliser pour dissocier plusieur ruche entre elle sur la meme frequence
       typeCapteur (uint8_t): numerotaion du capteur utiliser ie savoir si c est un capteur de temperature ou de poid etc...
-      valeurCapteur (uint16_t): valeur lu par le capteur 
+      valeurCapteur (float): valeur lu par le capteur 
       portSerieVirtuel (Stream): nom de la class du port serie physique du module LoRa
       portSerieCom (Stream): nom de la class du port serie de la comunication USB
-      receptionLoRa (uint8_t) flag de la bonne emission d un message LoRa
+      receptionLoRa (uint8_t) flag de la bonne emission d un message LoRa. si TRUE erreur de l emission du message
   */
   
+  //structure de convertion des float en uin32_t (representation ieee754 des floatants)
+  typedef union
+  {
+    float asFloat;
+    uint32_t asUint32_t;
+  }
+  convertStruct;
+
   //declaration des variables locals
+  convertStruct structValue;
   String StringCleSysteme ="";
   String StringIdRuche ="";
   String StringTypeCapteur ="";
   String StringValeurCapteur ="";  
   String LoRaRecu ="";
   uint16_t timeOut = 0;
+  //pointeur flag d erreur
+  *receptionLoRa = 0;
 
-  *receptionLoRa = 1;
-
-  //prise en compte de la taille de la cleSysteme
-  if(cleSysteme < 16)
+  //convertie la valeur de valeurCapteur en hex sur 32bits (ieee754)
+  structValue.asFloat = valeurCapteur;
+  StringValeurCapteur = String(structValue.asUint32_t, HEX);
+  while(StringValeurCapteur.length() < 8)
   {
-    StringCleSysteme = "000" + String(cleSysteme, HEX);
-  }
-  else if(cleSysteme < 256)
-  {
-    StringCleSysteme = "00" + String(cleSysteme, HEX);
-  }
-  else if(cleSysteme < 4096)
-  {
-    StringCleSysteme = "0" + String(cleSysteme, HEX);
-  }
-  else
-  {
-    StringCleSysteme = String(cleSysteme, HEX);
+    StringValeurCapteur = "0" + StringValeurCapteur;
   }
 
-  //prise en compte de la taille valeurCapteur
-  if(valeurCapteur < 16)
+  //convertie la valeur de cleSysteme en hex sur 16bits
+  StringCleSysteme = String(cleSysteme, HEX);
+  while(StringCleSysteme.length() < 4)
   {
-    StringValeurCapteur = "000" + String(valeurCapteur, HEX);
-  }
-  else if(valeurCapteur < 256)
-  {
-    StringValeurCapteur = "00" + String(valeurCapteur, HEX);
-  }
-  else if(valeurCapteur < 4096)
-  {
-    StringValeurCapteur = "0" + String(valeurCapteur, HEX);
-  }
-  else
-  {
-    StringValeurCapteur = String(valeurCapteur, HEX);
+    StringCleSysteme = "0" + StringCleSysteme;
   }
 
-  //prise en compte de la taille de l'idRuche
-  if(idRuche < 16){
-    StringIdRuche = "0" + String(idRuche, HEX);
-  }
-  else{
-    StringIdRuche = String(idRuche, HEX);
+  //convertie la valeur de l'idRuche en hex sur 8bits
+  StringIdRuche = String(idRuche, HEX);
+  while(StringIdRuche.length() < 2)
+  {
+    StringIdRuche = "0" + StringIdRuche;
   }
 
-  //prise en compte de la taille du typeCapteur
-  if(typeCapteur < 16){
-    StringTypeCapteur = "0" + String(typeCapteur, HEX);
-  }
-  else{
-    StringTypeCapteur = String(typeCapteur, HEX);
+  //convertie la valeur du typeCapteur en hex sur 8bits
+  StringTypeCapteur = String(typeCapteur, HEX);
+  while(StringTypeCapteur.length() < 2)
+  {
+    StringTypeCapteur = "0" + StringTypeCapteur;
   }
 
   //envoie des donnee via le module LoRa
@@ -269,6 +255,6 @@ void envoieLoRa_E5_P2P(uint16_t cleSysteme, uint8_t idRuche, uint8_t typeCapteur
   portSerieCom.println(LoRaRecu); //affichage du message recu pour debuggage
   if(LoRaRecu.indexOf("+TEST: TX DONE") <= 0)
   {
-    *receptionLoRa = 0;
+    *receptionLoRa = 1;
   }
 }

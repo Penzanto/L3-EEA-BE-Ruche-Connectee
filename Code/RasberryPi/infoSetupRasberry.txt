@@ -27,3 +27,8 @@ commande mysql utile:
 - SHOW COLUMNS FROM Mesure; (montre les colone d'une table)
 - INSERT INTO Mesure VALUES ('2023-04-15 20:39:00', 0, 20.5, 70, 17.2, 50, 12.532, 4.12);   (permet d'inserrer des datas dans une table)
 - SELECT * FROM Mesure; (montre toutes les valeurs de toutes les colones de la table Mesure)
+
+
+--------------------------ServerWeb--------------------------
+lancer le code JS: 
+- npm run start

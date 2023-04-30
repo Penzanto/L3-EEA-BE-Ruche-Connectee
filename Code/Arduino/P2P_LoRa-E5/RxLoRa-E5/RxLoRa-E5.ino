@@ -40,7 +40,7 @@ void loop() {
   uint16_t cleSysteme =0;
   uint8_t codeRuche =0;
   uint8_t typeCapteur =0;
-  uint16_t valeurCapteur =0;
+  float valeurCapteur =0;
   ReceptionLoRa_E5_P2P(&cleSysteme, &codeRuche, &typeCapteur, &valeurCapteur, SerialLoRa, Serial);
 
   //si la cle systeme correspond bien. alors on affiche toutes les valeurs
@@ -190,7 +190,7 @@ void initialisationLoRa_E5_P2P(uint16_t frequence,  String SpreadFactor, uint16_
 }
 
 
-void ReceptionLoRa_E5_P2P(uint16_t *cleSysteme, uint8_t *idRuche, uint8_t *typeCapteur, uint16_t *valeurCapteur, Stream &portSerieVirtuel, Stream &portSerieCom)
+void ReceptionLoRa_E5_P2P(uint16_t *cleSysteme, uint8_t *idRuche, uint8_t *typeCapteur, float *valeurCapteur, Stream &portSerieVirtuel, Stream &portSerieCom)
 {
   /*
     Fonction de recuperation et de traitement des information LoRa pour extraire la cleSysteme, idRuche, typeCapteur et la valeurCapteur
@@ -199,12 +199,21 @@ void ReceptionLoRa_E5_P2P(uint16_t *cleSysteme, uint8_t *idRuche, uint8_t *typeC
       cleSysteme (uint16_t): cle utilisee pour dissocier les messages du projet ruche des autres messages sur la frequence 868/433Mhz
       idRuche (uint8_t): numerotation de la ruche, utiliser pour dissocier plusieur ruche entre elle sur la meme frequence
       typeCapteur (uint8_t): numerotaion du capteur utiliser ie savoir si c est un capteur de temperature ou de poid etc...
-      valeurCapteur (uint16_t): valeur lu par le capteur 
+      valeurCapteur (float): valeur lu par le capteur (ieee754 32bits)
       portSerieVirtuel (Stream): nom de la class du port serie physique du module LoRa
       portSerieCom (Stream): nom de la class du port serie de la comunication USB
   */
   
+  //structure de convertion des float en uin32_t (representation ieee754 des floatants)
+  typedef union
+  {
+    float asFloat;
+    uint32_t asUint32_t;
+  }
+  convertStruct;
+
   //declaration des variables locals
+  convertStruct structValue;  //variable de la strucure
   String messageLoraRecu ="";
   uint8_t debutString =0;  
 
@@ -217,7 +226,9 @@ void ReceptionLoRa_E5_P2P(uint16_t *cleSysteme, uint8_t *idRuche, uint8_t *typeC
     *cleSysteme = strtol(messageLoraRecu.substring(debutString, debutString +4).c_str(), NULL, 16);
     *idRuche = strtol(messageLoraRecu.substring(debutString +4, debutString +6).c_str(), NULL, 16);
     *typeCapteur = strtol(messageLoraRecu.substring(debutString +6, debutString +8).c_str(), NULL, 16);
-    *valeurCapteur = strtol(messageLoraRecu.substring(debutString +8, debutString +12).c_str(), NULL, 16);
+    //fcontionement un peu different car on doit convertir du ieee754 32bits en string et l arduino ne supporte pas le 32bits (16bits maximum)
+    structValue.asUint32_t = strtol(messageLoraRecu.substring(debutString +8, debutString +12).c_str(), NULL, 16) <<16 | strtol(messageLoraRecu.substring(debutString +12, debutString +16).c_str(), NULL, 16);
+    *valeurCapteur = structValue.asFloat;
   }
   else{
     *cleSysteme =0;

@@ -136,16 +136,33 @@ def decodageMessageLoRa(portSerieLoRa):
     valeurRecu = str(receptionLoRa_split[1])[:-3]
     
     #tri des differentes valeurs
-    if(len(valeurRecu) == 12):  #premiere pre-verification du message
+    if(len(valeurRecu) == 16):  #premiere pre-verification du message
         codeSysteme_recu = int(valeurRecu[:4],16)
         codeRuche_recu = int(valeurRecu[4:6],16)
         indiceCapteur_recu = int(valeurRecu[6:8],16)
-        valeurCapteur_recu = int(valeurRecu[8:],16)
-    else:
-        receptionLoRaOK = 0
-        print("erreur taille message LoRa recu")
+        valeurCapteur_recu = int(valeurRecu[8:],16) #valeur recu en ieee 32bits ont doit alors le convertir en decimal avant de l utiliser 
 
-    return codeSysteme_recu, codeRuche_recu, indiceCapteur_recu, valeurCapteur_recu, receptionLoRaOK
+        #convertion de la valeur du capteur recu en decimal (ieee 32bits -> decimal)
+        sign = valeurCapteur_recu >> 31
+        exponent = valeurCapteur_recu >> 23 & 0xFF
+        mantissaBin = valeurCapteur_recu & 0x7FFFFF
+        #calcul de la mantisse
+        mantisse = 1
+        for i in range(24):
+            if (mantissaBin >> 23-i & 0b1) == 1:
+                mantisse = mantisse + 2**-i
+        #calcul de la valeur decimal
+        floatIeee32Bits = (-1)**sign * (2**(exponent-127) * mantisse)
+
+    else:
+        print("erreur taille message LoRa recu")
+        receptionLoRaOK = 0
+        codeSysteme_recu = 0
+        codeRuche_recu = 0
+        indiceCapteur_recu = 0
+        floatIeee32Bits = 0
+
+    return codeSysteme_recu, codeRuche_recu, indiceCapteur_recu, floatIeee32Bits, receptionLoRaOK
 
 
 #----------Fonction main----------

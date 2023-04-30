@@ -1,6 +1,6 @@
 //ajout des libraries utile
 #include <SoftwareSerial.h> //librarie pour la creation du port serie virtuel
-#include <RH_RF95.h>  //librarie utiliser pour comuniquer avec le module LoRa
+#include <RH_RF95.h>  //librarie utiliser pour comuniquer avec le module LoRa  (nom lib: Grove - LoRa Radio 433Mhz 868Mhz)
 
 //reglage des pins du module LoRa sur la carte arduino
 #define rxPin 5

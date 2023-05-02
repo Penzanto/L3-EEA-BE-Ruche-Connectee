@@ -13,8 +13,10 @@ hardware uart rasberry :
 
 --------------------------DATABASE--------------------------
 database managment:
-- launch database console: sudo mysql -u root -p
-- mdp: BEruche (root password)
+- launch database console:sudo mysql -u root -p
+mdp: BEruche (root password)
+- selection de la database :USE BERUCHE;
+
 
 database name: BERUCHE 
 user: userBERUCHE

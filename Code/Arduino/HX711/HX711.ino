@@ -24,7 +24,7 @@ void loop() {
   if(erreur_HX711 != 1)
   {
     //correction de la valeur rendu par le capteur
-    Serial.println("Masse = " + String((valeur_HX711*5.59099E-4)-167.7) + "g");
+    Serial.println("Masse = " + String((valeur_HX711*0.00215525)-611.204) + "g");
   }
   else
   {
@@ -32,9 +32,10 @@ void loop() {
     Serial.println("erreur lors de la lecture");
   }
 
-  //mise en veille du capteur pendant 3 secondes
-  miseEnVeilleHX711(clk_HX711, data_HX711);
-  delay(3000);
+  delay(100);
+  // //mise en veille du capteur pendant 3 secondes
+  // miseEnVeilleHX711(clk_HX711, data_HX711);
+  // delay(3000);
 }
 
 

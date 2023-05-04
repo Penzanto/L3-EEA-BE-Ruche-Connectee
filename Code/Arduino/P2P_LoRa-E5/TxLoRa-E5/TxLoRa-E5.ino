@@ -44,7 +44,7 @@ void setup() {
 
 void loop() {
   float valeurCapteur =-123456.987654321;  //variable de test
-  uint8_t receptionLoRa =1; //variablede verification de la bonne emision d un message LoRa
+  uint8_t receptionLoRa =0; //variablede verification de la bonne emision d un message LoRa
   envoieLoRa_E5_P2P(codeSysteme, codeRuche, SHT31_Humid, valeurCapteur, SerialLoRa, Serial, &receptionLoRa);  //envoie d un message
   //si l'initialisation du module c est mal passe on vient bloquer le programme
   if(receptionLoRa ==1){
@@ -66,14 +66,14 @@ void initialisationLoRa_E5_P2P(uint16_t frequence,  String SpreadFactor, uint16_
     
     Args:
       frequence (uint16_t): frequence d emission du module
-      SpreadFactor (String): 
+      SpreadFactor (String): facteur d empietement
       BandWidth (uint16_t): bande passante 
-      TX_Preamble (uint8_t): 
-      RX_Preamble (uint8_t): 
+      TX_Preamble (uint8_t): longeur des datas en emission
+      RX_Preamble (uint8_t): longeur des datas en reception
       Power (uint8_t): puissance d emission en dBm
       CRC (String): activation du CRC (activation du CRC "ON")
-      Inverted_IQ (String): 
-      Public_LoRaWAN (string): 
+      Inverted_IQ (String): sens du changement de frequence de la modulation
+      Public_LoRaWAN (string): si on veut oui ou non utiliser le reseau LoRaWan
       portSerieVirtuel (Stream): nom de la class du port serie physique du module LoRa
       portSerieCom (Stream): nom de la class du port serie de la comunication USB
       initialisaitonLoRa (uint8_t) variable d acquittement de la bonne initialisation du module LoRa. si TRUE erreur de l init

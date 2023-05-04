@@ -15,7 +15,8 @@ void loop() {
   float temp_SHT31 = 0;
   float hum_SHT31 = 0;
   uint8_t Error = 0;
-  sht31_lectureTempEtHumid(&temp_SHT31, &hum_SHT31, &Error);
+
+  sht31_lectureTempEtHumid(addr_SHT31, &temp_SHT31, &hum_SHT31, &Error);
 
   if(Error == 0)
   {
@@ -34,12 +35,13 @@ void loop() {
 
 
 //-----------------------------------------------Fonction-----------------------------------------------
-void sht31_lectureTempEtHumid(float *temp_SHT31, float *hum_SHT31, uint8_t *Error)
+void sht31_lectureTempEtHumid(int addrI2C_SHT31, float *temp_SHT31, float *hum_SHT31, uint8_t *Error)
 {
 /*
     Fonction de recuperation de la temperature et de l humidite du capteur SHT31 via I2C
     
     Args:
+      addrI2C_SHT31  (int): adresse I2C du capteur SHT31
       temp_SHT31 (float): pointeur de la valeur de la temperature du capteur SHT31
       hum_SHT31 (float): pointeur de la valeur de la humidite du capteur SHT31
       Error (uint8_t): pointeur de variable d erreur. si True alors erreur lors de la reception des information du capteur
@@ -60,7 +62,7 @@ void sht31_lectureTempEtHumid(float *temp_SHT31, float *hum_SHT31, uint8_t *Erro
   *Error = 0;
 
   //demande de mesure de temperature et d humid
-  Wire.beginTransmission(addr_SHT31);
+  Wire.beginTransmission(addrI2C_SHT31);
   Wire.write(0x24);
   Wire.write(0x00);
   Wire.endTransmission();
@@ -69,7 +71,7 @@ void sht31_lectureTempEtHumid(float *temp_SHT31, float *hum_SHT31, uint8_t *Erro
   delay(50);  //delay min 13ms
 
   //lecture mesure
-  Wire.requestFrom(addr_SHT31, 6);
+  Wire.requestFrom(addrI2C_SHT31, 6);
   if(Wire.available() >=6)
   {
     tempbin_SHT31 = Wire.read() << 8 | Wire.read();

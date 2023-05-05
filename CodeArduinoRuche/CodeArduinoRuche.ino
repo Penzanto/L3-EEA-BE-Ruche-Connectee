@@ -284,5 +284,8 @@ void loop() {
   delay(3000);
 
   Serial.println("Free SRAM : " + String(freeMemory()) + "/2238");
-  delay(600000);
+
+  //mise en veille des capteurs
+  miseEnVeilleHX711(clk_HX711);
+  //delay(600000);
 }

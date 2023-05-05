@@ -34,7 +34,7 @@ void loop() {
 
   delay(100);
   // //mise en veille du capteur pendant 3 secondes
-  // miseEnVeilleHX711(clk_HX711, data_HX711);
+  // miseEnVeilleHX711(clk_HX711);
   // delay(3000);
 }
 
@@ -92,14 +92,13 @@ void lectureHX711(uint32_t *valeur_HX711, uint8_t *erreur_HX711, uint8_t pinClk_
   }
 }
 
-void miseEnVeilleHX711(uint8_t pinClk_HX711, uint8_t pinData_HX711)
+void miseEnVeilleHX711(uint8_t pinClk_HX711)
 {
   /*
     Fonction de mise en veille du capteur HX711
     
     Args:
       pinClk_HX711 (uint8_t): numero du pin de la clock du capteur sur le µc
-      pinData_HX711 (uint8_t):  numero du pin de la data du capteur sur le µc
   */
   
   digitalWrite(pinClk_HX711, HIGH);

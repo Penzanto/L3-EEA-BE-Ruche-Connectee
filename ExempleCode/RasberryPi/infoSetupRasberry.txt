@@ -1,0 +1,50 @@
+--------------------------LOGIN--------------------------
+login: pi
+mdp: BEruche
+
+
+--------------------------HARDWARE--------------------------
+hardware uart rasberry :
+-> hardware uart enable
+-> uart TX : GPIO14 (UART_TXD0)
+-> uart RX : GPIO15 (UART_RXD0)
+-> uart USED : serial0 -> '/dev/ttyAMA0' (uart "PL011")
+
+
+--------------------------DATABASE--------------------------
+database managment:
+- launch database console: sudo mysql -u root -p
+mdp: BEruche (root password)
+- selection de la database : USE BERUCHE;
+
+
+database name: BERUCHE 
+user: userBERUCHE
+mdp: BERUCHE
+
+stop database: sudo service mysql stop
+
+commande mysql utile:
+- SHOW TABLE;   (montre toutes les table d'un base de donnee)
+- SHOW COLUMNS FROM Mesure; (montre les colone d'une table)
+- INSERT INTO Mesure VALUES ('2023-04-15 20:39:00', 0, 20.5, 70, 17.2, 50, 12.532, 4.12);   (permet d'inserrer des datas dans une table)
+- SELECT * FROM Mesure; (montre toutes les valeurs de toutes les colones de la table Mesure)
+
+creation de la table:
+CREATE TABLE Mesure
+(
+    DateHeure DATETIME,
+    Ruche TINYINT,
+    TempInter FLOAT(4, 2),
+    HumidInter FLOAT(4, 2),
+    TempExter FLOAT(4, 2),
+    HumiExter FLOAT(4, 2),
+    Masse SMALLINT,
+    Proxi BOOL,
+    Vbat FLOAT(3, 2)
+);
+
+
+--------------------------ServerWeb--------------------------
+lancer le code JS: 
+- npm run start

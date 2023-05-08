@@ -10,17 +10,14 @@ const fs = require('fs')
 //ajout du framework path
 const path = require('path')
 
-//cree la pool de la base de donnee
-// const pool = mariadb.createPool({
-//   host: 'localhost',
-//   port: '3306',
-//   user: 'userBERUCHE',
-//   password: 'BERUCHE'
-// });
 
-
-
-
+// cree la pool de la base de donnee
+const pool = mariadb.createPool({
+  host: 'localhost',
+  port: '3306',
+  user: 'userBERUCHE',
+  password: 'BERUCHE'
+});
 
 //option du midlman fastify/static utiliser pour faire le transfer de fichier entre le server et le client
 fastify.register(require('@fastify/static'), 
@@ -29,6 +26,12 @@ fastify.register(require('@fastify/static'),
   prefix: '/',
   constraints: {}
 })
+
+//reglage de "Access-Control-Allow-Origin" (autorisation a tous le monde de faire de requette au serveur)
+fastify.register(require('@fastify/cors'), { 
+  origin: '*'
+})
+
 
 // Start the server
 fastify.listen({ port: 3000, host: '::' }, function (err, address) 
@@ -46,52 +49,39 @@ fastify.get('/', async (req, reply) =>
   return reply.sendFile('PageWeb.html')
 });
 
-//Declare une nouvelle route secondaire         http://localhost:3000/exemple
-fastify.get('/exemple', async (req, reply) => 
+//Declare une nouvelle route secondaire
+fastify.get('/lastLigneDB', async (req, reply) => 
 {
-  const responseData = {
-    message:"Hello, GFG Learner",
-      articleData:{
-        articleName: "How to send JSON response from NodeJS",
-        category:"NodeJS",
-        status: "published"
-      },
-      endingMessage:"Visit Geeksforgeeks.org for more"
-  }
-
-  const jsonContent = JSON.stringify(responseData);
-  return reply.send(jsonContent)
+   await lastValDataBase().then(function(data) 
+   {
+    reply.header('Content-Type', 'application/json')
+    return reply.send(data)
+   })
 });
 
 
-
-
-// lastValDataBase().then(function(dateHeure) {
-// console.log(dateHeure)
-// })
-
-
-
 //-------------------------------------Fonction de maraiDB------------------------------------- 
-// async function lastValDataBase() 
-// {
-//   /*
-//     Fonction de recuperation de la derniere ligne de valeur dans la base de donnee mariadB
-//   */
-//   //connection a la db
-//   let conn = await pool.getConnection();
+async function lastValDataBase() 
+{
+  /*
+    Fonction de recuperation de la derniere ligne de valeur dans la base de donnee mariadB
 
-//   //demande de valeur via requet sql
-//   conn.query("USE BERUCHE");
-//   const result = await conn.query("SELECT * FROM Mesure ORDER BY DateHeure DESC LIMIT 1");
+    return:
+      lastRow(obj): retourne l'objet de la dernière ligne de la base de donnee
+  */
+ 
+  //connection a la db
+  let conn = await pool.getConnection();
 
-//   //convertion des valeurs
-//   const lastRow = result[0]
+  //demande de valeur via requet sql
+  conn.query("USE BERUCHE");
+  const result = await conn.query("SELECT * FROM Mesure ORDER BY DateHeure DESC LIMIT 1");
 
-//   //console.log(JSON.stringify(lastRow, null, 2));
+  //convertion des valeurs
+  const lastRow = result[0]
+  
+  //deconnection de la db
+  conn.release();
 
-//   //deconnection de la db
-//   conn.release();
-
-//   return lastRow;
-// }
+  return lastRow;
+}

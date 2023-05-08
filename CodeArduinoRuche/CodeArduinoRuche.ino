@@ -111,7 +111,6 @@ void loop() {
   float vBat =0;
   float humTemp_DHT11[2] = {0};
   
-  Serial.println("");
   //lecture temp & humid via le capteur DHT11
   dht.readTempAndHumidity(humTemp_DHT11);
   //transfert des donnees sous une forme plus facile a comprendre 
@@ -287,5 +286,5 @@ void loop() {
 
   //mise en veille des capteurs
   miseEnVeilleHX711(clk_HX711);
-  //delay(600000);
+  delay(600000);
 }

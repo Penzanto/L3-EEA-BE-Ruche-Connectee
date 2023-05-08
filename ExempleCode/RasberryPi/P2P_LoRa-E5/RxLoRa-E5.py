@@ -47,59 +47,59 @@ def initLoRa(frequence, SpreadFactor, BandWidth, TX_Preamble, RX_Preamble, Power
         portSerieLoRa (string): nom de la class du port serie physique du module LoRa
         
     Returns:
-        int: 1 ou 0 selon si l initialisation c est bien passer ou non
+        initialisaitonLoRaOK (int): 0 si init OK, 1 si erreur lors de l init du module LoRa
     """
 
     #variable local
-    initialisaitonLoRaOK = 1
+    initialisaitonLoRaOK = 0
     strAEnvoier = ""
 
     #passage du module Lora en "mode TEST"
     portSerieLoRa.write('AT+MODE=TEST'.encode())
     receptionLoRa = lectureLoRa(port=portSerieLoRa, octetLecture=200, stringAttendu="+MODE: TEST", timeOut=5)
     if(receptionLoRa =="-1"):
-        initialisaitonLoRaOK = 0
+        initialisaitonLoRaOK = 1
         print("\n erreur ecriture mode TEST")
     else:
         print(receptionLoRa)
 
     #passage du module Lora en "mode STOP" (empeche le module de recevoir des information durant la reprogramation du mode)
-    if(initialisaitonLoRaOK == 1):
+    if(initialisaitonLoRaOK == 0):
         portSerieLoRa.write('AT+TEST=STOP'.encode())
         receptionLoRa = lectureLoRa(port=portSerieLoRa, octetLecture=200, stringAttendu="+TEST: STOP", timeOut=5)
         if(receptionLoRa =="-1"):
-            initialisaitonLoRaOK = 0
+            initialisaitonLoRaOK = 1
             print("\n erreur ecriture mode STOP")
         else:
             print(receptionLoRa)
 
     #reglage du LDRO du module Lora
-    if(initialisaitonLoRaOK == 1):
+    if(initialisaitonLoRaOK == 0):
         portSerieLoRa.write('AT+LW=LDRO,ON'.encode())
         receptionLoRa = lectureLoRa(port=portSerieLoRa, octetLecture=200, stringAttendu="+LW: LDRO, ON", timeOut=5)
         if(receptionLoRa =="-1"):
-            initialisaitonLoRaOK = 0
+            initialisaitonLoRaOK = 1
             print("\n erreur ecriture mode LDRO")
         else:
             print(receptionLoRa)
 
     #configuration des parametres d emission radio du module LoRa
-    if(initialisaitonLoRaOK == 1):
+    if(initialisaitonLoRaOK == 0):
         strAEnvoier = 'AT+TEST=RFCFG,' + str(frequence) + ',' + SpreadFactor + ',' + str(BandWidth) + ',' + str(TX_Preamble) + ',' + str(RX_Preamble) + ',' + str(Power) + ',' + CRC + ',' + Inverted_IQ + ',' + Public_LoRaWAN
         portSerieLoRa.write(strAEnvoier.encode())
         receptionLoRa = lectureLoRa(portSerieLoRa, octetLecture=200, stringAttendu="+TEST: RFCFG F", timeOut=5)
         if(receptionLoRa =="-1"):
-            initialisaitonLoRaOK = 0
+            initialisaitonLoRaOK = 1
             print("\n erreur ecriture mode RFCFG")
         else:
             print(receptionLoRa)
 
     #configuration du module LoRa E5 en reception
-    if(initialisaitonLoRaOK == 1):
+    if(initialisaitonLoRaOK == 0):
         portSerieLoRa.write('AT+TEST=RXLRPKT'.encode())
         receptionLoRa = lectureLoRa(port=portSerieLoRa, octetLecture=200, stringAttendu="+TEST: RXLRPKT", timeOut=5)
     if(receptionLoRa =="-1"):
-        initialisaitonLoRaOK = 0
+        initialisaitonLoRaOK = 1
         print("\n erreur passage du module LoRa en reception")
     else:
         print(receptionLoRa)
@@ -118,17 +118,18 @@ def decodageMessageLoRa(portSerieLoRa):
         codeRuche_recu (int): valeur recu par le module LoRa pour le codeRuche
         indiceCapteur_recu (int): valeur recu par le module LoRa pour le indiceCapteur
         valeurCapteur_recu (int): valeur recu par le module LoRa pour le valeurCapteur
-        receptionLoRaOK (int): information sur la bonne reception d un message. si 1 message bien recu, si 0 erreur lors de la reception du message
+        receptionLoRaOK (int): information sur la bonne reception d un message. si 0 message bien recu, si 1 erreur lors de la reception du message
     """
+
     #variable local
     receptionLoRa = "1"
-    receptionLoRaOK = 1
+    receptionLoRaOK = 0
 
     #lecture des donnees dans le buffer de la laision UART
     receptionLoRa = lectureLoRa(port=portSerieLoRa, octetLecture=200, stringAttendu='+TEST: RX "', timeOut=20)
     #gestion de l erreur
     if(receptionLoRa == "-1"):
-        receptionLoRaOK = 0
+        receptionLoRaOK = 1
         print("erreur lors de la reception du message LoRa")
 
     #decoupage du message
@@ -156,7 +157,7 @@ def decodageMessageLoRa(portSerieLoRa):
 
     else:
         print("erreur taille message LoRa recu")
-        receptionLoRaOK = 0
+        receptionLoRaOK = 1
         codeSysteme_recu = 0
         codeRuche_recu = 0
         indiceCapteur_recu = 0

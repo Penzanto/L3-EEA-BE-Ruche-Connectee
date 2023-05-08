@@ -13,9 +13,9 @@ hardware uart rasberry :
 
 --------------------------DATABASE--------------------------
 database managment:
-- launch database console:sudo mysql -u root -p
+- launch database console: sudo mysql -u root -p
 mdp: BEruche (root password)
-- selection de la database :USE BERUCHE;
+- selection de la database : USE BERUCHE;
 
 
 database name: BERUCHE 
@@ -29,6 +29,20 @@ commande mysql utile:
 - SHOW COLUMNS FROM Mesure; (montre les colone d'une table)
 - INSERT INTO Mesure VALUES ('2023-04-15 20:39:00', 0, 20.5, 70, 17.2, 50, 12.532, 4.12);   (permet d'inserrer des datas dans une table)
 - SELECT * FROM Mesure; (montre toutes les valeurs de toutes les colones de la table Mesure)
+
+creation de la table:
+CREATE TABLE Mesure
+(
+    DateHeure DATETIME,
+    Ruche TINYINT,
+    TempInter FLOAT(4, 2),
+    HumidInter FLOAT(4, 2),
+    TempExter FLOAT(4, 2),
+    HumiExter FLOAT(4, 2),
+    Masse SMALLINT,
+    Proxi BOOL,
+    Vbat FLOAT(3, 2)
+);
 
 
 --------------------------ServerWeb--------------------------

@@ -1,34 +1,28 @@
-window.onload=function() {
+window.onload=function() {   
+    //fonction de recuperation et d affichage des derniere valeurs recu de la ruche
+    async  function fetchData()
+    { 
+        /*
+            fonction de recuperation et d affichage des valeurs des dernieres valeurs recu par la bdd
 
-    async function fetchData()
-    {
-        const data = await fetch('http://localhost:3000/exemple')
-        console.log(data)
+        */
+
+        //recuperation des valeurs
+        let url = 'http://192.168.1.93:3000/lastLigneDB'
+        const data = await fetch(url).then(res => res.json())
+
+        //affichage des valeurs
+        document.getElementById('TempInter').innerHTML = data.TempInter
+        document.getElementById('HumidInter').innerHTML = data.HumidInter
+        document.getElementById('TempExter').innerHTML = data.TempExter
+        document.getElementById('HumiExter').innerHTML = data.HumiExter
+        document.getElementById('Masse').innerHTML = data.Masse
+        document.getElementById('Proxi').innerHTML = data.Proxi
+        document.getElementById('Vbat').innerHTML = data.Vbat
     }
 
-    fetchData()
     
-
-
-
-
-
-    var VarTest = "123"
-    var SHT31_Temp = VarTest
-    var SHT31_Humid = VarTest
-    var DHT11_Temp = VarTest
-    var DHT11_Humid = VarTest
-    var cap_Dist = VarTest
-    var cap_Masse = VarTest
-
-    //lien des variables avec ce qui est affiche sur la page html
-    document.getElementById('SHT31_Temp').innerHTML = SHT31_Temp
-    document.getElementById('SHT31_Humid').innerHTML = SHT31_Humid
-    //
-    document.getElementById('DHT11_Temp').innerHTML = DHT11_Temp
-    document.getElementById('DHT11_Humid').innerHTML = DHT11_Humid
-    //
-    document.getElementById('Distance').innerHTML = cap_Dist
-    //
-    document.getElementById('Masse').innerHTML = cap_Masse
+    fetchData()
+    //repete la fonction fetchData() toutes les secondes
+    setInterval(function() {fetchData();}, 1000);
 }

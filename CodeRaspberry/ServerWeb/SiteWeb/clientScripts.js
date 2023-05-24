@@ -12,13 +12,13 @@ window.onload=function() {
         const data = await fetch(url).then(res => res.json())
 
         //affichage des valeurs
-        document.getElementById('TempInter').innerHTML = data.TempInter
-        document.getElementById('HumidInter').innerHTML = data.HumidInter
-        document.getElementById('TempExter').innerHTML = data.TempExter
-        document.getElementById('HumiExter').innerHTML = data.HumiExter
-        document.getElementById('Masse').innerHTML = data.Masse
+        document.getElementById('TempInter').innerHTML = data.TempInter + "°C"
+        document.getElementById('HumidInter').innerHTML = data.HumidInter + "%"
+        document.getElementById('TempExter').innerHTML = data.TempExter + "°C"
+        document.getElementById('HumidExter').innerHTML = data.HumiExter + "%"
+        document.getElementById('Masse').innerHTML = data.Masse + "g"
         document.getElementById('Proxi').innerHTML = data.Proxi
-        document.getElementById('Vbat').innerHTML = data.Vbat
+        document.getElementById('Vbat').innerHTML = data.Vbat + "V"
     }
 
     
